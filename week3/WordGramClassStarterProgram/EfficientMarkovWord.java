@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EfficientMarkovWord implements IMarkovModel{
-    
     private String[] myText;
     private Random myRandom;
     private int myOrder;
@@ -28,24 +27,29 @@ public class EfficientMarkovWord implements IMarkovModel{
     private void buildMap(){
         map = new HashMap<WordGram,ArrayList<String>>();
 
-        if (myText == null){
-            System.out.println("Need to setTraining(st) first");
-            return;
-        }
         for(int k=0; k <= myText.length-myOrder; k++){
             // for each N-character String key int myText,
             WordGram kGram = new WordGram(myText, k, myOrder);
-
+            
+            ArrayList<String> follows;
             // check if map.containsKey(key)
             if (!map.containsKey(kGram)) {
-                // If key is not in HashMap find all the follows words in an ArrayList
-                ArrayList<String> follows = getFollows(kGram);
-                // get it and save it
-                map.put(kGram,follows);
+                // If key is not in HashMap, start a new ArrayList for follows
+                follows = new ArrayList<String>();                
             }
             else {
-                // else key has already been added to the map
+                // else key has already been added, get Follows from HashMap
+                follows = map.get(kGram);
+            }
+            
+            if (k+myOrder < myText.length){
+                follows.add(myText[k+myOrder]);
             } 
+            else {
+                //else add an empty ArrayList   
+            }
+            // get it and save it
+            map.put(kGram,follows);
         }
         //printHashMapInfo();
     }
@@ -102,7 +106,7 @@ public class EfficientMarkovWord implements IMarkovModel{
             // get it from map
             follows = map.get(kGram);
             //System.out.println(key+" : "+follows);
-            if (follows.size() == 0) {
+            if (follows == null || follows.size() == 0) {
                 break;
             }
             index = myRandom.nextInt(follows.size());

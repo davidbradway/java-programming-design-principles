@@ -25,24 +25,26 @@ public class EfficientMarkovModel extends AbstractMarkovModel {
     private void buildMap(){
         map = new HashMap<String,ArrayList<String>>();
 
-        if (myText == null){
-            System.out.println("Need to setTraining(st) first");
-            return;
-        }
         for(int k=0; k <= myText.length()-N; k++){
             // for each N-character String key int myText,
             String key = myText.substring(k,k+N);
 
+            ArrayList<String> follows;
             // check if map.containsKey(key)
             if (!map.containsKey(key)) {
                 // If key is not in HashMap find all the follows characters in an ArrayList
-                ArrayList<String> follows = getFollows(key);
-                // get it and save it
-                map.put(key,follows);
+                follows = new ArrayList<String>();
             }
             else {
-                // else key has already been added to the map
+                // else key has already been added, get follows from HashMap
+                follows = map.get(key);
             } 
+
+            if (k+N < myText.length()){
+                follows.add(myText.substring(k+N,k+N+1));
+            }
+            // get it and save it
+            map.put(key,follows);
         }
         printHashMapInfo();
     }
